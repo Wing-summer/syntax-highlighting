@@ -56,6 +56,11 @@ public:
      */
     QTextBlock findFoldingRegionEnd(const QTextBlock &startBlock) const;
 
+    // addtional property releated method to expend more functions by wingsummer
+    static void setProperty(QTextBlock &block, const QString &name, const QVariant &property);
+    static QVariant property(QTextBlock &block, const QString &name);
+    static void removeProperty(QTextBlock &block, const QString &name);
+
 protected:
     void highlightBlock(const QString &text) override;
     void applyFormat(int offset, int length, const Format &format) override;

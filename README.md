@@ -8,6 +8,10 @@ Syntax highlighting engine for Kate syntax definitions
 
 This version does not require other KDE dependencies and supports Qt5/Qt6. The library can be compiled independently and used normally. The currently ported `KSyntaxHighlighting` version is `6.7.0`.
 
+我对该库的`KSyntaxHighlighting::TextBlockUserData`增加了一个成员，用于拓展存储额外的信息。因为原库占用了`userData`，导致我想要在此附加额外的东西就再也无法追加。为了简化处理，就加了几个函数用来实现额外的属性管理功能。
+
+I added a member to the library's `KSyntaxHighlighting::TextBlockUserData` to expand and store additional information. Because the original library occupies `userData`, I can no longer append anything I want. In order to simplify the problem, I added a few functions to implement additional attribute management.
+
 ## Table of contents
 
 1. [Introduction](#introduction)

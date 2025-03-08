@@ -12,6 +12,7 @@
 #include "format.h"
 #include "format_p.h"
 #include "state.h"
+#include "state_p.h"
 #include "theme.h"
 #include "themedata_p.h"
 
@@ -25,6 +26,7 @@ class TextBlockUserData : public QTextBlockUserData
 public:
     State state;
     QVector<FoldingRegion> foldingRegions;
+    QVariantHash properties;
 };
 
 class SyntaxHighlighterPrivate : public AbstractHighlighterPrivate
@@ -183,6 +185,41 @@ QTextBlock SyntaxHighlighter::findFoldingRegionEnd(const QTextBlock &startBlock)
     return QTextBlock();
 }
 
+void SyntaxHighlighter::setProperty(QTextBlock &block, const QString &name, const QVariant &property)
+{
+    if (block.isValid()) {
+        auto data = dynamic_cast<TextBlockUserData *>(block.userData());
+        if (data == nullptr) {
+            data = new TextBlockUserData;
+            data->state = {};
+            data->foldingRegions = {};
+            block.setUserData(data);
+        }
+        data->properties.insert(name, property);
+    }
+}
+
+QVariant SyntaxHighlighter::property(QTextBlock &block, const QString &name)
+{
+    if (block.isValid()) {
+        auto data = dynamic_cast<TextBlockUserData *>(block.userData());
+        if (data) {
+            return data->properties.value(name);
+        }
+    }
+    return {};
+}
+
+void SyntaxHighlighter::removeProperty(QTextBlock &block, const QString &name)
+{
+    if (block.isValid()) {
+        auto data = dynamic_cast<TextBlockUserData *>(block.userData());
+        if (data) {
+            data->properties.remove(name);
+        }
+    }
+}
+
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
     Q_D(SyntaxHighlighter);
@@ -205,6 +242,13 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         data->state = std::move(newState);
         data->foldingRegions = d->foldingRegions;
         setCurrentBlockUserData(data);
+        return;
+    }
+
+    // still first time to highlight but it had set property before
+    if (!KSyntaxHighlighting::StateData::get(data->state)) {
+        data->state = std::move(newState);
+        data->foldingRegions = d->foldingRegions;
         return;
     }
 
