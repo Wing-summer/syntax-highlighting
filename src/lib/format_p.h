@@ -7,8 +7,11 @@
 #ifndef KSYNTAXHIGHLIGHTING_FORMAT_P_H
 #define KSYNTAXHIGHLIGHTING_FORMAT_P_H
 
+#include "format.h"
 #include "textstyledata_p.h"
 #include "theme.h"
+
+#include <cstdint>
 
 #include <QSharedData>
 #include <QString>
@@ -17,18 +20,14 @@ QT_BEGIN_NAMESPACE
 class QXmlStreamReader;
 QT_END_NAMESPACE
 
-namespace KSyntaxHighlighting
-{
+namespace KSyntaxHighlighting {
 class FormatPrivate : public QSharedData
 {
 public:
     FormatPrivate() = default;
     static FormatPrivate *detachAndGet(Format &format);
 
-    static std::intptr_t ptrId(const Format &format)
-    {
-        return std::intptr_t(format.d.data());
-    }
+    static std::intptr_t ptrId(const Format &format) { return std::intptr_t(format.d.data()); }
 
     TextStyleData styleOverride(const Theme &theme) const;
     void load(QXmlStreamReader &reader);
@@ -46,6 +45,6 @@ public:
     bool spellCheck = true;
 };
 
-}
+} // namespace KSyntaxHighlighting
 
 #endif
